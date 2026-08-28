@@ -1,34 +1,33 @@
-# Orchestration automatisée — ECS + Kubernetes
+# Orchestration automatisée ECS + Kubernetes
 
-Déploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)**,�ploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)**,
-industrialisé via une chaîne unique **Terraform + Jenkins**.
+Déploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)** industrialisée via une chaîne unique **Terraform + Jenkins**.
 
 ## Structure du dépôt
 
 ```
 .modules/ecs/    ECR, cluster Fargate, task definition (LabRole), ALB, security groups, service ECS
-.modules/k8s/    namespace, ConfigMap, Deployment (3 réplicas + sondes), Service, Ingress, HPA
-.kyverno/       politique de sécurité (interdiction du tag latest)
+.modules/k8s/    namespace, ConfigMap, Deployment (3 rÃ©plicas + sondes), Service, Ingress, HPA
+.kyverno/       politique de sÃ©curitÃ© (interdiction du tag latest)
 .main.tf / variables.tf / versions.tf   configuration racine (providers aws + kubernetes)
 .Jenkinsfile     pipeline validate -> plan -> approbation -> apply
 ```
 
-## Prérequis
+## Pré requis : 
 
 - Terraform >= 1.5, AWS CLI (session AWS Academy), Docker, Minikube, kubectl, Helm, Jenkins
-- Cluster Minikube démarré avec le CNI Calico :
+- Cluster Minikube démarre avec le CNI Calico :
   ```
   minikube start --driver=docker --cni=calico
   ```
 - Addons : `minikube addons enable ingress` et `minikube addons enable metrics-server`
-- Kyverno installé : `helm install kyverno kyverno/kyverno -n kyverno --create-namespace`
+- Kyverno installÃ© : `helm install kyverno kyverno/kyverno -n kyverno --create-namespace`
 
 ## Secrets (jamais versionnés)
 
-L'ARN du LabRole est fourni via `terraform.tfvars` (ignoré par Git) ou la variable
-d'environnement `TF_VAR_lab_role_arn`. Côté Jenkins, il est stocké en credential.
+L'ARN du LabRole est fourni via `terraform.tfvars` (ignorés par git) ou la variable
+d'environnement `TF_VAR_lab_role_arn`.Jenkins, il est stockÃ© en credential.
 
-## D�ploiement
+## Déploiement
 
 ### En local
 
@@ -50,6 +49,6 @@ et pilote les deux cibles. Le pipeline est idempotent : une seconde exécution n
 
 ## Sécurité
 
-- Moindre privilège : LabRole côté ECS, security groups restreints, Kyverno côté K8s
+- Moindre privilège : LabRole ECS, security groups restreints, Kyverno K8s
 - Aucun secret en clair dans le dépôt (`.gitignore` couvre tfstate, tfvars, credentials)
 - Images taguées (jamais `latest`)

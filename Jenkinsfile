@@ -2,15 +2,15 @@ pipeline {
   agent any
 
   environment {
-    // Terraform tournera dans le workspace du job
     TF_IN_AUTOMATION = "true"
+    // lit la credential Jenkins "lab-role-arn" et l'expose a Terraform
+    // (TF_VAR_xxx alimente automatiquement la variable Terraform "xxx")
+    TF_VAR_lab_role_arn = credentials('lab-role-arn')
   }
 
   stages {
     stage('Checkout') {
-      steps {
-        checkout scm
-      }
+      steps { checkout scm }
     }
 
     stage('Validate') {
@@ -22,23 +22,15 @@ pipeline {
     }
 
     stage('Plan') {
-      steps {
-        // plan des DEUX cibles (ECS + K8s) en un seul plan
-        sh 'terraform plan -input=false -out=tfplan'
-      }
+      steps { sh 'terraform plan -input=false -out=tfplan' }
     }
 
     stage('Approve') {
-      steps {
-        input message: 'Appliquer le deploiement ECS + Kubernetes ?'
-      }
+      steps { input message: 'Appliquer le deploiement ECS + Kubernetes ?' }
     }
 
     stage('Apply') {
-      steps {
-        // idempotent : n'applique que les differences du plan
-        sh 'terraform apply -input=false tfplan'
-      }
+      steps { sh 'terraform apply -input=false tfplan' }
     }
   }
 

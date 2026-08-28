@@ -1,6 +1,6 @@
 # Orchestration automatisée — ECS + Kubernetes
 
-D�ploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)**,
+Déploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)**,�ploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernetes (Minikube)**,
 industrialisé via une chaîne unique **Terraform + Jenkins**.
 
 ## Structure du dépôt

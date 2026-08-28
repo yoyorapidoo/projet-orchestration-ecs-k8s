@@ -41,7 +41,7 @@ resource "aws_security_group" "alb" {
 # SG des tâches : port 8080 accessible UNIQUEMENT depuis l'ALB
 resource "aws_security_group" "task" {
   name        = "${var.app_name}-task-sg"
-  description = "Taches ECS - trafic depuis l'ALB seulement"
+  description = "Taches ECS - trafic depuis ALB seulement"
   vpc_id      = data.aws_vpc.default.id
   ingress {
     from_port       = 8080

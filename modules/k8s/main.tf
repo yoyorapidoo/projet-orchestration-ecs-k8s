@@ -1,11 +1,9 @@
-# Namespace dédié
 resource "kubernetes_namespace" "boutique" {
   metadata {
     name = var.namespace
   }
 }
 
-# ConfigMap : configuration non sensible externalisée
 resource "kubernetes_config_map" "boutique" {
   metadata {
     name      = "boutique-config"
@@ -17,7 +15,6 @@ resource "kubernetes_config_map" "boutique" {
   }
 }
 
-# Deployment : frontend web, 3 réplicas, resources + sondes
 resource "kubernetes_deployment" "web" {
   metadata {
     name      = "web"
@@ -37,23 +34,18 @@ resource "kubernetes_deployment" "web" {
         container {
           name  = "web"
           image = var.app_image
-
           port {
             container_port = 80
           }
-
-          # injection du ConfigMap en variables d'environnement
           env_from {
             config_map_ref {
               name = kubernetes_config_map.boutique.metadata[0].name
             }
           }
-
           resources {
-            requests = { cpu = "50m",  memory = "32Mi" }
+            requests = { cpu = "50m", memory = "32Mi" }
             limits   = { cpu = "150m", memory = "64Mi" }
           }
-
           readiness_probe {
             http_get {
               path = "/"
@@ -73,9 +65,11 @@ resource "kubernetes_deployment" "web" {
       }
     }
   }
+  lifecycle {
+    ignore_changes = [spec[0].replicas]
+  }
 }
 
-# Service NodePort : expose le frontend
 resource "kubernetes_service" "web" {
   metadata {
     name      = "web-svc"
@@ -91,7 +85,6 @@ resource "kubernetes_service" "web" {
   }
 }
 
-# Ingress : entrée HTTP par nom d'hôte
 resource "kubernetes_ingress_v1" "web" {
   metadata {
     name      = "boutique-ingress"
@@ -118,7 +111,6 @@ resource "kubernetes_ingress_v1" "web" {
   }
 }
 
-# HorizontalPodAutoscaler : mise à l'échelle automatique sur le CPU
 resource "kubernetes_horizontal_pod_autoscaler_v2" "web" {
   metadata {
     name      = "web-hpa"

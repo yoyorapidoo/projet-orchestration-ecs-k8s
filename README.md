@@ -6,8 +6,8 @@ Déploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernete
 
 ```
 .modules/ecs/    ECR, cluster Fargate, task definition (LabRole), ALB, security groups, service ECS
-.modules/k8s/    namespace, ConfigMap, Deployment (3 rÃ©plicas + sondes), Service, Ingress, HPA
-.kyverno/       politique de sÃ©curitÃ© (interdiction du tag latest)
+.modules/k8s/    namespace, ConfigMap, Deployment (3 réplicas + sondes), Service, Ingress, HPA
+.kyverno/       politique de sécurité (interdiction du tag latest)
 .main.tf / variables.tf / versions.tf   configuration racine (providers aws + kubernetes)
 .Jenkinsfile     pipeline validate -> plan -> approbation -> apply
 ```
@@ -20,12 +20,12 @@ Déploiement d'une même application sur **Amazon ECS (Fargate)** et **Kubernete
   minikube start --driver=docker --cni=calico
   ```
 - Addons : `minikube addons enable ingress` et `minikube addons enable metrics-server`
-- Kyverno installÃ© : `helm install kyverno kyverno/kyverno -n kyverno --create-namespace`
+- Kyverno installé : `helm install kyverno kyverno/kyverno -n kyverno --create-namespace`
 
 ## Secrets (jamais versionnés)
 
 L'ARN du LabRole est fourni via `terraform.tfvars` (ignorés par git) ou la variable
-d'environnement `TF_VAR_lab_role_arn`.Jenkins, il est stockÃ© en credential.
+d'environnement `TF_VAR_lab_role_arn`.Jenkins, il est stocké en credential.
 
 ## Déploiement
 

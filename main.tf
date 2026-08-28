@@ -12,5 +12,6 @@ module "k8s" {
 }
 
 module "ecs" {
-  source = "./modules/ecs"
+  source       = "./modules/ecs"
+  lab_role_arn = var.lab_role_arn
 }
